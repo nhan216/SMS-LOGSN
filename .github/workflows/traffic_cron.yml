@@ -2,7 +2,7 @@ name: Go Vap Traffic Scraper
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/30 * * * *'  # Hệ thống sẽ tự kích hoạt mỗi 30 phút
   workflow_dispatch:
 
 jobs:
