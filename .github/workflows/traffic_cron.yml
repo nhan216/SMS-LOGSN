@@ -2,7 +2,7 @@ name: Go Vap Traffic Scraper
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # Hệ thống sẽ tự kích hoạt mỗi 30 phút
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -11,15 +11,12 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.9'
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
       - name: Run scraper
         env:
           TOMTOM_KEY: ${{ secrets.TOMTOM_KEY }}
