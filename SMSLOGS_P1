@@ -1,0 +1,43 @@
+import pymongo
+import time
+import random
+from datetime import datetime
+
+# 1. Kết nối Atlas
+client = pymongo.MongoClient('mongodb+srv://tnandb:2162006nhan@cluster0.g7oottr.mongodb.net/')
+db = client["SMSLOGS_DB01"]
+orders_col = db["Orders"]
+
+def simulate_realtime_order(order_id):
+    # Giả lập tọa độ loanh quanh Gò Vấp (Lat: 10.82, Lng: 106.67)
+    current_lat = 10.826 + random.uniform(-0.01, 0.01)
+    current_lng = 106.676 + random.uniform(-0.01, 0.01)
+    
+    # Dữ liệu cập nhật
+    update_data = {
+        "$set": {
+            "order_id": order_id,
+            "current_location": {
+                "type": "Point",
+                "coordinates": [current_lng, current_lat]
+            },
+            "last_updated": datetime.now(),
+            "status": "shipping"
+        }
+    }
+
+    # Thực hiện lệnh Smart Update
+    orders_col.update_one(
+        {"order_id": order_id}, # Điều kiện tìm đơn hàng
+        update_data,             # Dữ liệu cần cập nhật
+        upsert=True              # Nếu không thấy thì tạo mới luôn
+    )
+    print(f"Đã cập nhật đơn hàng {order_id} tại tọa độ: {current_lat}, {current_lng}")
+
+# Chạy vòng lặp giả lập mỗi 5 giây cập nhật 1 lần
+try:
+    while True:
+        simulate_realtime_order("ORDER_GOVAP_001")
+        time.sleep(5) 
+except KeyboardInterrupt:
+    print("Dừng giả lập.")
